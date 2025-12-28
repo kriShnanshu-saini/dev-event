@@ -1,4 +1,4 @@
-import {Document, Error, model, models, Schema, Types} from 'mongoose';
+import {Document, Error as MongooseError, model, models, Schema, Types} from 'mongoose';
 import Event from './event.model';
 
 // TypeScript interface for Booking document
@@ -45,29 +45,25 @@ BookingSchema.pre('save', async function () {
         try {
             const eventExists = await Event
                 .findById(booking.eventId)
-                .select('_id');
-
+                .select('_id')
+                .lean();
             if (!eventExists) {
                 const error = new Error(
                     `Event with ID ${booking.eventId} does not exist`
                 );
                 error.name = 'ValidationError';
-                throw new Error.ValidationError(error);
-
+                throw new MongooseError.ValidationError(error);
             }
         } catch (err) {
             const validationError = new Error(
                 'Invalid event ID format or database error'
             );
             validationError.name = 'ValidationError';
-            throw new Error.ValidationError(validationError);
+            throw new MongooseError.ValidationError(validationError);
         }
     }
 });
 
-
-// Create index on eventId for faster queries
-BookingSchema.index({eventId: 1});
 
 // Create compound index for common queries (events bookings by date)
 BookingSchema.index({eventId: 1, createdAt: -1});

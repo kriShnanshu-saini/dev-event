@@ -9,16 +9,16 @@ type MongooseCache = {
 // extend global object to include our mongoose cache
 declare global {
     // eslint-disable-next-line no-var
-    var mongoose: MongooseCache | undefined;
+    var mongooseCache: MongooseCache | undefined;
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // initialize the cache on global object to persist across hot reloads in development
-let cached: MongooseCache = global.mongoose || {conn: null, promise: null};
+let cached: MongooseCache = global.mongooseCache || {conn: null, promise: null};
 
-if (!global.mongoose) {
-    global.mongoose = cached;
+if (!global.mongooseCache) {
+    global.mongooseCache = cached;
 }
 
 /**
@@ -42,8 +42,7 @@ async function connectDB(): Promise<typeof mongoose> {
         };
 
         // create new connection promise
-        cached.promise = mongoose.connect(MONGODB_URI!, options)
-            .then((mongoose) => mongoose);
+        cached.promise = mongoose.connect(MONGODB_URI!, options);
     }
 
     try {
