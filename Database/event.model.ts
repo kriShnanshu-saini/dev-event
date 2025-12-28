@@ -151,7 +151,7 @@ function normalizeDate(dateString: string): string {
 
 function normalizeTime(timeString: string): string {
     // handle various time formats and convert to HH:mm (24h format)
-    const timeRegex = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i;
+    const timeRegex = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/;
     const match = timeString.trim().match(timeRegex);
 
     if (!match) {
